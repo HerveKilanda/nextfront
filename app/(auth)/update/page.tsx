@@ -1,24 +1,45 @@
 "use client";
-import { useState } from "react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input, InputProps } from "@/components/ui/input";
-import { useForm, useFormState } from "react-hook-form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function UpdateProfile() {
   const [alert, setAlert] = useState(false);
+  const [isNotified, setIsNotified] = useState(false);
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitSuccessful },
   } = useForm({
     defaultValues: {
       email: "",
       password: "",
       username: "",
     },
+    mode: "onChange", // Validate form on change
   });
+
+  function Notification() {
+    return (
+      <div className="mb-3">
+        {alert ? (
+          <Alert className="bg-green-600 text-black">
+            <AlertTitle>Félicitations !</AlertTitle>
+            <AlertDescription>Modifications réussie.</AlertDescription>
+          </Alert>
+        ) : (
+          <Alert className="bg-red-600 text-black">
+            <AlertTitle>Erreur !</AlertTitle>
+            <AlertDescription>Veuillez recommencez</AlertDescription>
+          </Alert>
+        )}
+      </div>
+    );
+  }
 
   const onSubmit = async (data) => {
     try {
@@ -32,33 +53,31 @@ export default function UpdateProfile() {
       });
 
       if (response.ok) {
-        const result = await response.json();
+        console.log("Connexion réussie avec le backend NestJS");
         setAlert(true);
+        setIsNotified(true);
         reset();
       } else {
-        console.error("Failed to update user");
+        console.error("Erreur lors de la modification des données");
+        setAlert(false);
+        setIsNotified(true);
       }
     } catch (error) {
-      console.error("Error updating user", error);
+      console.error("Erreur", error);
+      setAlert(false);
+      setIsNotified(true);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center mt-48">
-      {alert && (
-        <Alert className="mb-3 bg-green-600 text-black ">
-          <AlertTitle>Félicitations !</AlertTitle>
-          <AlertDescription>
-            Vos informations ont été mises à jour avec succès !
-          </AlertDescription>
-        </Alert>
-      )}
+      {isNotified && <Notification />}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="relative border-4 border-blueivy bg-black rounded w-96 py-10 px-8 md:mt-0 md:mx-w-sm md:px:14 "
+        className="relative border-4 border-blueivy bg-black rounded w-96 py-10 px-8 md:mt-0 md:mx-w-sm md:px:14"
       >
         <h1 className="text-3xl text-center font-semibold text-white">
-          Mise à jour du profil
+          Modification du profile
         </h1>
         <div className="space-y-5 mt-5 p-6">
           <Input
@@ -108,10 +127,15 @@ export default function UpdateProfile() {
               {errors.password.message}
             </p>
           )}
-          <Button type="submit" className="w-full">
-            Mettre à jour
+          <Button type="submit" className="w-full" disabled={!isValid}>
+            Valider
           </Button>
         </div>
+        {isSubmitSuccessful && (
+          <p className="text-green-500 text-center mt-4">
+            Vos informations ont été modifié avec succès
+          </p>
+        )}
       </form>
     </div>
   );

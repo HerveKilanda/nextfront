@@ -79,9 +79,45 @@
   }
   body {
     @apply bg-background text-foreground;
+    
   }
 
   body[data-scroll-locked="1"] {
     position: static !important;
   }
+  /* styles/global.css */
+
+.navbar-dropdown {
+  position: relative;
+  z-index: 20; /* Plus élevé que le Hero pour qu'il s'affiche au-dessus */
+}
+
+.navbar-dropdown-content {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 30; /* Assurez-vous que cela est également élevé */
+}
+
+.navbar-dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.navbar-dropdown-content a:hover {
+  background-color: #ddd;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
 }
