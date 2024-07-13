@@ -45,7 +45,7 @@ export default function UpdateProfile() {
   const onSubmit = async (data) => {
    
     try {
-      const response = await fetch(`http://localhost:8000/auth/inscription`, {
+      const response = await fetch(`http://localhost:5000/auth/inscription`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

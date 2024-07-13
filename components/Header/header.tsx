@@ -1,66 +1,76 @@
+// components/Header.tsx
+
+"use client";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Dropdown from "../Dropdown/dropdown";
-
+import { useEffect, useState } from "react";
+import UserMenu from "../Dropdown/dropdown";
+import { getMe } from "@/app/get-me";
 
 export default function Header() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  // const me = await getMe();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await getMe();
+        setUser(user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
   return (
-    <nav className="flex flex-wrap items-center justify-between w-full p-4 bg-blue-700 text-white shadow-md">
-      <div className="flex items-center flex-shrink-0 text-3xl">Otakulinks</div>
-      <div className="block sm:hidden">
+    <nav className="flex flex-wrap items-center justify-between p-4 bg-blue-700 text-white shadow-md">
+      <div className="flex items-center justify-between flex-grow sm:flex-grow-0">
+        <h1 className="text-3xl">Otakulinks</h1>
         <button
-          type="button"
-          className="flex items-center px-3 py-2 border rounded text-gray-500 border-gray-600 hover:text-white hover:border-white"
+          onClick={() => setIsOpen(!isOpen)}
+          className="sm:hidden text-3xl"
         >
-          <svg
-            className="fill-current h-3 w-3"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-            
-          >
-            <title>Menu</title>
-            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-          </svg>
+          <i>Menu</i>
         </button>
       </div>
-      <div className="w-full block flex-grow sm:flex sm:items-center sm:w-auto">
-        <div className="text-sm sm:flex-grow">
-          <form className="flex items-center w-full justify-center">
-            <input
-              type="search"
-              className="w-96 ml-28 h-12 px-4 rounded-full  text-black border-2 border-gray-300 focus:border-blue-500 focus:outline-none"
-              placeholder="Rechercher un manga"
-            />
-            <Search
-              size={24}
-              strokeWidth={3}
-              className="ml-2 relative right-10 text-black cursor-pointer"
-            />
-          </form>
-        </div>
-        <div className="flex items-center gap-4 mt-4 sm:mt-0 sm:flex-grow sm:justify-end text-xl">
-          <Link
-            href="/"
-            className="transition-colors duration-300 hover:text-gray-300"
-          >
-            Home
-          </Link>
-          <Link
-            href="/inscription"
-            className="transition-colors duration-300 hover:text-gray-300"
-          >
-            Inscription
-          </Link>
-          <Link
-            href="/connexion"
-            className="transition-colors duration-300 hover:text-gray-300"
-          >
-            Connexion
-          </Link>
-          <Dropdown />
-        </div>
+      <div
+        className={`${isOpen ? 'block' : 'hidden'} sm:block flex-grow sm:flex sm:items-center sm:justify-center`}
+      >
+        <SearchInput />
+      </div>
+      <div
+        className={`${isOpen ? 'block' : 'hidden'} sm:block sm:flex-grow sm:flex sm:items-center sm:justify-end text-xl gap-4 mt-4 sm:mt-0`}
+      >
+        <NavLink href="/" text="Home" />
+        <NavLink href="/inscription" text="Inscription" />
+        <NavLink href="/connexion" text="Connexion" />
+        {user && <UserMenu user={user} />}
       </div>
     </nav>
   );
+
+  function SearchInput() {
+    return (
+      <div className="relative">
+        <input
+          type="search"
+          className="w-96 sm:w-96 h-12 px-4 rounded-full text-black border-2 border-gray-300 focus:border-blue-500 focus:outline-none"
+          placeholder="Rechercher un manga"
+        />
+      </div>
+    );
+  }
+
+  function NavLink({ href, text }) {
+    return (
+      <Link
+        href={href}
+        className="transition-colors duration-300 hover:text-gray-300"
+      >
+        {text}
+      </Link>
+    );
+  }
 }

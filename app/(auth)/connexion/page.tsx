@@ -1,10 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
+
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import Cookie from "js-cookie";
 
 export default function Connexion() {
   const [alert, setAlert] = useState(false);
@@ -42,7 +44,7 @@ export default function Connexion() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(`http://localhost:8000/auth/connexion`, {
+      const response = await fetch(`http://localhost:5000/auth/connexion`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,22 +54,23 @@ export default function Connexion() {
       });
 
       if (response.ok) {
-        console.log("Connexion réussie");
+        console.log("Connexion réussie", response);
+        const responseData = await response.json();
+        Cookie.set("token", responseData.token);
         setAlert(true);
         setIsNotified(true);
         reset();
       } else {
-        console.error("Échec de l'inscription");
+        console.error("Échec de la connexion");
         setAlert(false);
         setIsNotified(true);
       }
     } catch (error) {
-      console.error("Erreur dans l'inscription", error);
+      console.error("Erreur dans la connexion", error);
       setAlert(false);
       setIsNotified(true);
     }
   };
-
 
   return (
     <div>
@@ -119,7 +122,7 @@ export default function Connexion() {
           </Button>
         </div>
         {isSubmitSuccessful && (
-          <p className="text-green-500 text-center mt-4">d
+          <p className="text-green-500 text-center mt-4">
             Le formulaire a été soumis avec succès !
           </p>
         )}

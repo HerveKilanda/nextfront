@@ -4,9 +4,13 @@ import Head from "next/head";
 
 import Hero from "@/components/Hero/addHero";
 
+import { getMe } from "@/app/get-me";
 
 
-export default function Home() {
+
+export default async function Home() {
+  const me = await getMe();
+  console.log(me);
   return (
     <>
       <Head>
