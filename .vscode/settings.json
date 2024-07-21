@@ -1,5 +1,25 @@
 {
-    "editor.fontFamily": "JetBrains Mono, Consolas, 'Courier New', monospace",
-    "editor.fontSize": 16,
-    "editor.fontWeight": "500"
+  "workbench.colorTheme": "Night Wolf (black) (No Italics)",
+  "files.autoSave": "afterDelay",
+  "codium.codeCompletion.enable": true,
+  "codium.rag.maxLocalSnippets": 200,
+  "workbench.iconTheme": "symbols",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "workbench.sideBar.location": "right",
+  "tabnine.experimentalAutoImports": true,
+  "symbols.hidesExplorerArrows": false,
+  "editor.autoClosingComments": "always",
+  "editor.autoClosingBrackets": "always",
+  "terminal.integrated.fontWeight": "normal",
+  "editor.fontWeight": "normal",
+  "editor.fontSize": 15,
+  "editor.fontLigatures": true,
+  "window.zoomLevel": -1,
+  "codeium.enableConfig": {
+    "*": true
+  },
+  "editor.fontFamily": "Fira Code, Monaco, 'Courier New', monospace",
+  "explorer.compactFolders": false,
+  "explorer.confirmDelete": false
 }

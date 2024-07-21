@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Cookie from "js-cookie";
+import { API_URL } from "@/app/constants/api";
+
 
 export default function Connexion() {
   const [alert, setAlert] = useState(false);
@@ -44,7 +46,7 @@ export default function Connexion() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(`http://localhost:5000/auth/connexion`, {
+      const response = await fetch(`${API_URL}/auth/connexion`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

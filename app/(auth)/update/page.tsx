@@ -43,7 +43,7 @@ export default function UpdateProfile() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(`http://localhost:8000/auth/update`, {
+      const response = await fetch(`http://localhost:5000/auth/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export default function UpdateProfile() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center mt-48">
+    <div className="flex flex-col items-center justify-center">
       {isNotified && <Notification />}
       <form
         onSubmit={handleSubmit(onSubmit)}

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ReactNode } from "react";
-import bluelock from "../../public/bluelock.jpg";
+import titans from "../../public/titans.jpg";
 
 /**
  * React component that wraps its children with a styled div including a background image.
@@ -13,7 +13,7 @@ export default function LayoutPage({ children, className = "" }: { children: Rea
   return (
     <div className={`relative flex flex-col items-center justify-center min-h-screen ${className}`}>
       <Image
-        src={bluelock}
+        src={titans}
         alt="A beautiful blue lock background image"
         className="absolute inset-0 w-full h-full object-cover -z-10 brightness-50"
         priority

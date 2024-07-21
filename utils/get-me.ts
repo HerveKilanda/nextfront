@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { API_URL } from "./constants/api";
+import { API_URL } from "../app/constants/api";
 
 
 /**
@@ -27,6 +27,7 @@ export async function getMe() {
     // Fetch the user's data from the API, including the token in the request headers
     const me = await fetch(`${API_URL}/auth/me`, {
       headers: { Cookie: `token=${token}` },
+      method: "GET",
     });
 
     // If the API request fails, throw an error

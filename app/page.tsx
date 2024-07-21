@@ -4,7 +4,7 @@ import Head from "next/head";
 
 import Hero from "@/components/Hero/addHero";
 
-import { getMe } from "@/app/get-me";
+import { getMe } from "@/utils/get-me";
 
 
 

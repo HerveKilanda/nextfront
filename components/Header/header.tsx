@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import UserMenu from "../Dropdown/dropdown";
-import { getMe } from "@/app/get-me";
+import { getMe } from "@/utils/get-me";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
