@@ -41,7 +41,7 @@ export default function Header() {
         <SearchInput />
       </div>
       <div
-        className={`${isOpen ? 'block' : 'hidden'} sm:block sm:flex-grow sm:flex sm:items-center sm:justify-end text-xl gap-4 mt-4 sm:mt-0`}
+        className={`${isOpen ? 'block' : 'hidden'} flex sm:flex-grow sm:flex sm:items-center sm:space-x-4 sm:justify-end text-xl gap-4 mt-4 sm:mt-0`}
       >
         <NavLink href="/" text="Home" />
         <NavLink href="/inscription" text="Inscription" />
