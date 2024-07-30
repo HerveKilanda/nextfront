@@ -6,11 +6,17 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import UserMenu from "../Dropdown/dropdown";
 import { getMe } from "@/utils/get-me";
+import { searchManga } from "@/utils/search-manga";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Input } from "../ui/input";
 
-export default function Header() {
+export default function Header({params}) {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
-  // const me = await getMe();
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+
+  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -23,6 +29,13 @@ export default function Header() {
     };
     fetchUser();
   }, []);
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchQuery.trim() !== "") {
+      router.push(`/${params.mangaId}`);
+    }
+  };
 
   return (
     <nav className="flex flex-wrap items-center justify-between p-4 bg-blue-700 text-white shadow-md">
@@ -54,11 +67,15 @@ export default function Header() {
   function SearchInput() {
     return (
       <div className="relative">
-        <input
-          type="search"
-          className="w-96 sm:w-96 h-12 px-4 rounded-full text-black border-2 border-gray-300 focus:border-blue-500 focus:outline-none"
-          placeholder="Rechercher un manga"
-        />
+        <form onSubmit={handleSearchSubmit}>
+        <Input
+        type="search"
+        placeholder="Rechercher..."
+        className="text-xl bg-[#333] placeholder:text-gray-50 w-full inline-block"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+        </form>
       </div>
     );
   }

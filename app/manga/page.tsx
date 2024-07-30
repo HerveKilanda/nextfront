@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
 import { getMe } from "@/utils/get-me";
 import { useEffect, useState } from "react";
@@ -14,8 +14,8 @@ export default function MangaPage() {
   useEffect(() => {
     const fetchManga = async () => {
       const me = await getMe();
-    try {
-        const response = await fetch(`${API_URL}/manga/all`, {
+      try {
+        const response = await fetch(`${API_URL}/manga`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -35,28 +35,26 @@ export default function MangaPage() {
         setLoading(false);
       }
     };
-      fetchManga();
-    }, []);
-    if (loading) {
-      return <p>Chargement...</p>;
-    }
-    if (error) {
-      return <p>Erreur : {error}</p>;
-    }
-    if (!manga) {
-      return <p>Aucun manga trouvé.</p>;
-    }
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <InfiniteMovingCards
-          items={manga}
-          direction="left"
-          speed="slow"
-          pauseOnHover={true}
-          className="w-full h-full"
-          
-        />
-      </div>
-    );
-
+    fetchManga();
+  }, []);
+  if (loading) {
+    return <p>Chargement...</p>;
   }
+  if (error) {
+    return <p>Erreur : {error}</p>;
+  }
+  if (!manga) {
+    return <p>Aucun manga trouvé.</p>;
+  }
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <InfiniteMovingCards
+        items={manga}
+        direction="left"
+        speed="slow"
+        pauseOnHover={true}
+        className="w-full h-full"
+      />
+    </div>
+  );
+}

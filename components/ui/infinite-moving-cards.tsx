@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { Button } from "./button";
+import React, { useEffect, useState } from "react"
+import { Button} from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+
 
 export const InfiniteMovingCards = ({
   items,
@@ -75,9 +76,8 @@ export const InfiniteMovingCards = ({
       } else if (speed === "normal") {
         containerRef.current.style.setProperty("--animation-duration", "40s");
       } else {
-        containerRef.current.style.setProperty("--animation-duration", "20000s");
+        containerRef.current.style.setProperty("--animation-duration", "140s");
       }
-      // containerRef.current.style.setProperty("--animation-delay", "3000s");
     }
   };
 
@@ -120,7 +120,7 @@ export const InfiniteMovingCards = ({
                 {item.synopsis}
               </p>
               <p className="relative z-20 mt-2 text-sm leading-[1.6] text-gray-400 font-normal">
-                Genres: {item.genres.map(genre => genre.name).join(', ')}
+                Genres: {item.genres ? item.genres.map(genre => genre.name).join(', ') : 'N/A'}
               </p>
               <Button
                 rel="noopener noreferrer"

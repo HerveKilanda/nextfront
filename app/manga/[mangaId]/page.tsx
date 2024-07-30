@@ -45,14 +45,15 @@ export default function MangaDetails({ params }) {
   const handleBorrowClick = async () => {
     const me = await getMe();
     try {
-      const response = await fetch(`${API_URL}/emprunt`, {
+      const mangaId = parseInt(params.mangaId, 10);
+      const response = await fetch(`${API_URL}/emprunt/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Cookie: `token=${me.token}`,
         },
         credentials: "include",
-        body: JSON.stringify({ mangaId: params.mangaId }),
+        body: JSON.stringify({ mal_id: mangaId }),
       });
 
       if (response.ok) {
@@ -83,7 +84,7 @@ export default function MangaDetails({ params }) {
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6 text-center">Détails du manga</h1>
+      <h1 className="text-3xl font-bold mb-6 text-redivy  text-center">Détails du manga</h1>
       <div className="flex flex-col items-center">
         <MangaCard
           manga={{

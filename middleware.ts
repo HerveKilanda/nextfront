@@ -3,7 +3,9 @@ import { jwtVerify } from "jose";
 
 // Clé secrète utilisée pour vérifier le token, assurez-vous qu'elle correspond à la clé secrète de votre backend
 const SECRET_KEY = process.env.SECRET_KEY;
-console.log('Secret Key:', SECRET_KEY);
+if (!SECRET_KEY) {
+  throw new Error("La variable d'environnement 'SECRET_KEY' est manquante. Veuillez la configurer.");
+}
 
 export async function middleware(request: NextRequest) {
   console.log("middleware run");
@@ -11,21 +13,19 @@ export async function middleware(request: NextRequest) {
   // Récupération du chemin demandé
   const { pathname } = request.nextUrl;
 
-  // Vérification si la route est une route admin
-  const isAdminRoute = pathname.startsWith("/adminEmprunt");
+  const isProtectedRoute = [ "/emprunt", "/adminEmprunt"].some((path) =>
+    pathname.startsWith(path)
+  );
+  console.log(`Is Protected Route: ${isProtectedRoute}`);
   console.log(`Requested Path: ${pathname}`);
-  console.log(`Is Admin Route: ${isAdminRoute}`);
 
-  // Si c'est une route admin, on continue avec la vérification du token
-  if (isAdminRoute) {
-    // Récupération du token depuis les cookies
+  // Si la route est protégée, on procède à la vérification du token
+  if (isProtectedRoute) {
     const token = request.cookies.get("token")?.value || "";
-    console.log(`Token: ${token}`);
 
-    // Si aucun token n'est trouvé, redirection vers la page d'accueil
     if (!token) {
-      console.log("No token found, redirecting to home");
-      return NextResponse.redirect(new URL("/", request.url));
+      console.log("Le token n'a pas été trouvé, on redirige vers la page de connexion");
+      return NextResponse.redirect(new URL("/connexion", request.url));
     }
 
     try {
@@ -33,19 +33,19 @@ export async function middleware(request: NextRequest) {
       const { payload } = await jwtVerify(token, new TextEncoder().encode(SECRET_KEY));
       console.log(`Decoded Token: ${JSON.stringify(payload)}`);
 
-      // Si l'utilisateur est un admin, on autorise l'accès à la route
-      if (payload.role === "ADMIN") {
-        console.log("User is admin, allowing access");
-        return NextResponse.next();
-      } else {
-        // Si l'utilisateur n'est pas un admin, redirection vers la page d'accueil
-        console.log("User is not admin, redirecting to home");
+      // Si l'utilisateur est un admin et qu'il accède à une route admin, on autorise l'accès
+      if (pathname.startsWith("/adminEmprunt") && payload.role !== "ADMIN") {
+        console.log("L'utilisateur n'est pas un admin, on redirige vers la page d'accueil");
         return NextResponse.redirect(new URL("/", request.url));
       }
+
+      // L'utilisateur est authentifié, on autorise l'accès
+      console.log("L'utilisateur est authentifié, on autorise l'accès");
+      return NextResponse.next();
     } catch (error) {
       // Gestion des erreurs de vérification du token
-      console.error("Failed to verify token:", error);
-      return NextResponse.redirect(new URL("/", request.url));
+      console.error("Erreur de vérification du token:", error);
+      return NextResponse.redirect(new URL("/connexion", request.url));
     }
   }
 
@@ -55,5 +55,5 @@ export async function middleware(request: NextRequest) {
 
 // Configuration des routes pour lesquelles le middleware sera appliqué
 export const config = {
-  matcher: "/adminEmprunt/:path*",
+  matcher: ["/emprunt",  "/emprunt/:path*", "/adminEmprunt/:path*"],
 };

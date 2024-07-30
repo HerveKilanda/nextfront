@@ -52,6 +52,9 @@ const UserMenu = ({ user }) => {
           <DropdownMenuItem>
             <Link href="/update">Modification de Profil</Link>
           </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link href="/emprunt">Vos emprunts</Link>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={deconnexion}>deconnexion</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
