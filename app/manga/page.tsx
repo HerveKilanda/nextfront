@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { API_URL } from "../constants/api";
 
+/**
+ * Recupère les mangas et les affiches 
+ *
+ * @return {JSX.Element} The MangaPage component.
+ */
 export default function MangaPage() {
   const [manga, setManga] = useState(null);
   const [loading, setLoading] = useState(true);
