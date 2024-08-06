@@ -4,6 +4,9 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from 'react';
 import MangaCard from "@/components/MangaCard/addMangaCard";
+import { getMe } from "@/utils/get-me";
+import { API_URL } from "@/app/constants/api";
+import { Button } from "@/components/ui/button";
 
 export default function SearchResultsPage({ params }: { params: { title: string } }) {
   const searchParams = useSearchParams();
@@ -15,7 +18,31 @@ export default function SearchResultsPage({ params }: { params: { title: string 
     if (query && results) {
       setMangas(JSON.parse(decodeURIComponent(results)));
     }
-  }, [params.title,query, results]);
+  }, [params.title, query, results]);
+
+  const handleBorrowClick = async (mangaId) => {
+    const me = await getMe();
+    try {
+      const response = await fetch(`${API_URL}/emprunt/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `token=${me.token}`,
+        },
+        credentials: "include",
+        body: JSON.stringify({ mal_id: mangaId }),
+      });
+
+      if (response.ok) {
+        alert("Manga emprunté avec succès !");
+      } else {
+        alert("Échec de l'emprunt du manga.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'emprunt du manga:", error);
+      alert("Erreur lors de l'emprunt du manga.");
+    }
+  };
 
   return (
     <div className="container mx-auto py-10">
@@ -25,19 +52,26 @@ export default function SearchResultsPage({ params }: { params: { title: string 
       <div className="flex flex-col items-center">
         {mangas.length > 0 ? (
           mangas.map((manga) => (
-            <MangaCard
-              key={manga.mal_id}
-              manga={{
-                image_url: manga.image_url,
-                title: manga.title,
-                synopsis: manga.synopsis,
-                type: manga.type,
-                status: manga.status,
-                genres: Array.isArray(manga.genres)
-                  ? manga.genres.map((genre) => genre.name).join(", ")
-                  : "Aucun genre",
-              }}
-            />
+            <div key={manga.mal_id} className="mb-6">
+              <MangaCard
+                manga={{
+                  image_url: manga.image_url,
+                  title: manga.title,
+                  synopsis: manga.synopsis,
+                  type: manga.type,
+                  status: manga.status,
+                  genres: Array.isArray(manga.genres)
+                    ? manga.genres.map((genre) => genre.name).join(", ")
+                    : "Aucun genre",
+                }}
+              />
+              <Button
+                onClick={() => handleBorrowClick(manga.mal_id)}
+                className="mt-4 bg-blueivy text-white flex justify-center items-center"
+              >
+                Emprunter
+              </Button>
+            </div>
           ))
         ) : (
           <p>Aucun résultat trouvé.</p>
