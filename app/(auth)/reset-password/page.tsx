@@ -1,102 +1,106 @@
-/* eslint-disable react/no-unescaped-entities */
 "use client";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import { API_URL } from "@/app/constants/api";
+import { getCsrf } from "@/utils/csrf";
+import { useRouter } from "next/navigation";
 
 export default function ResetPassword() {
-  const [alert, setAlert] = useState(false);
+  const [csrfToken, setCsrfToken] = useState('');
+  const [isNotified, setIsNotified] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid, isSubmitSuccessful },
+    formState: { errors, isValid },
   } = useForm({
     defaultValues: {
       email: "",
     },
+    mode: "onChange",
   });
 
-  function Notification() {
-    return (
-      <div className="mb-3">
-        {alert ? (
-          <Alert className="bg-green-600 text-black">
-            <AlertTitle>Félicitations !</AlertTitle>
-            <AlertDescription>Inscription réussie.</AlertDescription>
-          </Alert>
-        ) : (
-          <Alert className="bg-red-600 text-black">
-            <AlertTitle>Erreur !</AlertTitle>
-            <AlertDescription>Échec de l'inscription.</AlertDescription>
-          </Alert>
-        )}
-      </div>
-    );
-  }
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      const csrf = await getCsrf();
+      setCsrfToken(csrf);
+    };
+
+    fetchCsrfToken();
+  }, []);
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/auth/reset-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(data),
-        }
-      );
+      setErrorMessage(''); 
+      const response = await fetch(`${API_URL}/auth/reset-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          'x-csrf-token': csrfToken,
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
 
       if (response.ok) {
-        setAlert(true);
+        console.log("Demande de réinitialisation envoyée avec succès");
+        setIsNotified(true);
         reset();
       } else {
-        console.error("Échec de l'envoi de l'email");
+        const errorData = await response.json();
+        console.error("Erreur lors de la réinitialisation:", errorData);
+        setErrorMessage(errorData.message || "Une erreur s'est produite");
+        setIsNotified(false);
       }
     } catch (error) {
-      console.error("Erreur dans l'envoi de l'email", error);
+      console.error("Erreur dans la réinitialisation", error);
+      setErrorMessage("Erreur réseau ou serveur");
+      setIsNotified(false);
     }
   };
-  return(
-    <div className="flex flex-col items-center justify-center ">
-      <div className="bg-black p-8 rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold mb-4">Mot de passe oublie</h1>
+
+  return (
+    <div className="flex justify-center items-center rounded-md brightness-75  bg-gray-100">
+      <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
+        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
+          Réinitialiser le mot de passe
+        </h2>
+        {isNotified && <p className="text-green-500 text-center mb-4">Demande de réinitialisation envoyée.</p>}
+        {errorMessage && <p className="text-red-500 text-center mb-4">{errorMessage}</p>}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label
-              className="block text-gray-700 font-bold mb-2"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <input
-              className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="email"
+            <Input
               type="email"
-              placeholder="Entrez votre email"
+              placeholder="Votre email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               {...register("email", {
-                required: "Veuillez entrer votre email.",
+                required: "L'email est requis",
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "L'email n'est pas valide",
+                },
               })}
             />
             {errors.email && (
-              <p className="text-red-500 text-xs italic">
+              <p role="alert" className="text-red-500 text-sm mt-1">
                 {errors.email.message}
               </p>
             )}
           </div>
-          <div className="flex items-center justify-center">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Envoyer
-            </button>
-          </div>
+          <Button
+            type="submit"
+            disabled={!isValid}
+            className="w-full py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Valider
+          </Button>
         </form>
       </div>
     </div>
-  )
+  );
 }

@@ -1,147 +1,132 @@
-// pages/reset-password-confirmation.js
-
-"use client"
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+"use client";
+import { useEffect, useState } from "react";
+import { API_URL } from "@/app/constants/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useForm } from "react-hook-form";
+import { getCsrf } from "@/utils/csrf";
+
 export default function ResetPasswordConfirmation() {
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const [alert, setAlert] = useState({ type: "", message: "" });
+  const [csrfToken, setCsrfToken] = useState('');
+  const { register, handleSubmit, reset, formState: { errors, isValid } } = useForm({
     defaultValues: {
       email: "",
       code: "",
       password: "",
     },
+    mode: "onChange",
   });
+  
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      const csrf = await getCsrf();
+      setCsrfToken(csrf);
+    };
+
+    fetchCsrfToken();
+  }, []);
 
   const onSubmit = async (data) => {
     try {
-      setLoading(true);
-      const response = await fetch(`http://localhost:8000/auth/reset-password-confirmation`, {
+      const response = await fetch(`${API_URL}/auth/reset-password-confirmation`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          'x-csrf-token': csrfToken,
         },
         credentials: "include",
         body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        <Alert className="bg-green-600 text-black">
-            <AlertTitle>Félicitations !</AlertTitle>
-            <AlertDescription>Mot de passe mis a jour avec succès !</AlertDescription>
-          </Alert>
+        setAlert({ type: "success", message: "Mot de passe réinitialisé avec succès." });
+        reset();
       } else {
-        const result = await response.json();
-        setMessage(result.message || "An error occurred. Please try again.");
+        const errorData = await response.json();
+        setAlert({ type: "error", message: errorData.message || "Erreur lors de la réinitialisation." });
       }
     } catch (error) {
-      console.error("Erreur lors de la requête", error);
-      setMessage("Une erreur s'est produite. Veuillez réessayer plus tard.");
-    } finally {
-      setLoading(false);
+      console.error("Erreur dans la réinitialisation du mot de passe", error);
+      setAlert({ type: "error", message: "Erreur lors de la réinitialisation." });
     }
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-white">
-          Confirmer la réinitialisation du mot de passe
+    <div className="flex justify-center items-center rounded-lg bg-gray-100">
+      <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
+        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
+          Confirmation de la réinitialisation du mot de passe
         </h2>
-        {message && <p className="mt-4 text-center text-red-500">{message}</p>}
-      </div>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Email
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  {...register("email", { required: "L'email est requis" })}
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className={`rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.email && (
-                  <p role="alert" className="text-red-500">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="code"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Code de confirmation
-              </label>
-              <div className="mt-2">
-                <input
-                  id="code"
-                  {...register("code", { required: "Le code est requis" })}
-                  type="text"
-                  required
-                  className={`rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-black block w-full sm:text-sm ${
-                    errors.code ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.code && (
-                  <p role="alert" className="text-red-500">
-                    {errors.code.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Nouveau mot de passe
-              </label>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  {...register("password", { required: "Le mot de passe est requis" })}
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  className={`rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-black block w-full sm:text-sm ${
-                    errors.password ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.password && (
-                  <p role="alert" className="text-red-500">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                {loading ? "Envoi en cours..." : "Mettre à jour le mot de passe"}
-              </button>
-            </div>
-          </form>
-        </div>
+        {alert.message && (
+          <Alert className={`mb-4 ${alert.type === "success" ? "bg-green-500" : "bg-red-500"} text-white`}>
+            <AlertTitle>{alert.type === "success" ? "Succès" : "Erreur"}</AlertTitle>
+            <AlertDescription>{alert.message}</AlertDescription>
+          </Alert>
+        )}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mb-4">
+            <Input
+              type="email"
+              placeholder="Votre email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              {...register("email", {
+                required: "L'email est requis",
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "L'email n'est pas valide",
+                },
+              })}
+            />
+            {errors.email && (
+              <p role="alert" className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <Input
+              type="text"
+              placeholder="Code de vérification"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              {...register("code", {
+                required: "Le code est requis",
+              })}
+            />
+            {errors.code && (
+              <p role="alert" className="text-red-500 text-sm mt-1">
+                {errors.code.message}
+              </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <Input
+              type="password"
+              placeholder="Nouveau mot de passe"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              {...register("password", {
+                required: "Le mot de passe est requis",
+                minLength: {
+                  value: 8,
+                  message: "Le mot de passe doit contenir au moins 8 caractères",
+                },
+              })}
+            />
+            {errors.password && (
+              <p role="alert" className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+          <Button
+            type="submit"
+            disabled={!isValid}
+            className="w-full py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Valider
+          </Button>
+        </form>
       </div>
     </div>
   );

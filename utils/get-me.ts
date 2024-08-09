@@ -16,11 +16,8 @@ export async function getMe() {
 
   // If there's no token, return null
   if (!token) {
-    console.log("no token");
+    console.log("il n'y a pas de token");
     return null;
-  } else {
-    // Log the token for debugging purposes
-    console.log("token", token);
   }
 
   try {

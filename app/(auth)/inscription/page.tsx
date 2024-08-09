@@ -3,12 +3,13 @@
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-import { useState } from "react";
+import { getCsrf } from "@/utils/csrf";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-export default function UpdateProfile() {
+export default function Inscription() {
   const [alert, setAlert] = useState(false);
+  const [csrfToken, setCsrfToken] = useState("");
   const [isNotified, setIsNotified] = useState(false);
   const {
     register,
@@ -41,21 +42,29 @@ export default function UpdateProfile() {
       </div>
     );
   }
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      const protection = await getCsrf();
+      setCsrfToken(protection);
+    };
+
+    fetchCsrfToken();
+  }, []);
 
   const onSubmit = async (data) => {
-   
     try {
       const response = await fetch(`http://localhost:5000/auth/inscription`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
         },
         credentials: "include",
         body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        console.log("Connexion réussie avec le backend NestJS");
+        console.log("Inscription reussie avec success !");
         setAlert(true);
         setIsNotified(true);
         reset();
@@ -71,7 +80,7 @@ export default function UpdateProfile() {
     }
   };
 
-  console.log("Rendering UpdateProfile component");
+  
   return (
     <div>
       {isNotified && <Notification />}

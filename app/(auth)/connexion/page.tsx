@@ -4,15 +4,20 @@
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Cookie from "js-cookie";
 import { API_URL } from "@/app/constants/api";
-
+import { getCsrf } from "@/utils/csrf";
+import Link from "next/link";
 
 export default function Connexion() {
   const [alert, setAlert] = useState(false);
   const [isNotified, setIsNotified] = useState(false);
+  const [csrfToken, setCsrfToken] = useState("");
+
+  
+
   const {
     register,
     handleSubmit,
@@ -22,8 +27,9 @@ export default function Connexion() {
     defaultValues: {
       email: "",
       password: "",
+      
     },
-    mode: "onChange", // Validate form on change
+    mode: "onChange",
   });
 
   function Notification() {
@@ -43,6 +49,15 @@ export default function Connexion() {
       </div>
     );
   }
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      const protection = await getCsrf();
+      setCsrfToken(protection);
+    };
+
+    fetchCsrfToken();
+  }, []);
+
 
   const onSubmit = async (data) => {
     try {
@@ -50,13 +65,15 @@ export default function Connexion() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          'x-csrf-token': csrfToken,
         },
         credentials: "include",
         body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        console.log("Connexion réussie", response);
+      
+        console.log("Connexion réussie !");
         const responseData = await response.json();
         Cookie.set("token", responseData.token);
         setAlert(true);
@@ -85,6 +102,8 @@ export default function Connexion() {
           Connexion
         </h1>
         <div className="space-y-5 mt-5 p-6">
+          
+
           <Input
             type="text"
             placeholder="email"
@@ -122,6 +141,9 @@ export default function Connexion() {
           <Button type="submit" className="w-full" disabled={!isValid}>
             Valider
           </Button>
+          <p className="text-white text-right underline">
+            <Link href="/reset-password">Mot de passe oublie</Link>
+          </p>
         </div>
         {isSubmitSuccessful && (
           <p className="text-green-500 text-center mt-4">

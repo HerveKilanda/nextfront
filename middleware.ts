@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
   // Récupération du chemin demandé
   const { pathname } = request.nextUrl;
 
-  const isProtectedRoute = ["/manga", "/manga/[mangaId]", "/emprunt", "/adminEmprunt"].some((path) =>
+  const isProtectedRoute = ["/manga","/update", "/manga/[mangaId]", "/emprunt", "/adminEmprunt"].some((path) =>
     pathname.startsWith(path)
   );
   console.log(`Is Protected Route: ${isProtectedRoute}`);
@@ -55,5 +55,5 @@ export async function middleware(request: NextRequest) {
 
 // Configuration des routes pour lesquelles le middleware sera appliqué
 export const config = {
-  matcher: [  "/manga", "/manga/:path*", "/emprunt",  "/emprunt/:path*", "/adminEmprunt/:path*"],
+  matcher: [  "/manga", "/update", "/manga/:path*", "/emprunt",  "/emprunt/:path*", "/adminEmprunt/:path*"],
 };

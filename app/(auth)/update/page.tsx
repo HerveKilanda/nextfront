@@ -2,12 +2,13 @@
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-import { useState } from "react";
+import { getCsrf } from "@/utils/csrf";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function UpdateProfile() {
   const [alert, setAlert] = useState(false);
+  const [csrfToken, setCsrfToken] = useState("");
   const [isNotified, setIsNotified] = useState(false);
   const {
     register,
@@ -22,6 +23,15 @@ export default function UpdateProfile() {
     },
     mode: "onChange", // Validate form on change
   });
+
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      const protection = await getCsrf();
+      setCsrfToken(protection);
+    };
+
+    fetchCsrfToken();
+  }, []);
 
   function Notification() {
     return (
@@ -47,6 +57,7 @@ export default function UpdateProfile() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
         },
         credentials: "include",
         body: JSON.stringify(data),

@@ -1,5 +1,5 @@
 {
-  "workbench.colorTheme": "Night Wolf (black) (No Italics)",
+  "workbench.colorTheme": "Ashtray Vibrant",
   "files.autoSave": "afterDelay",
   "codium.codeCompletion.enable": true,
   "codium.rag.maxLocalSnippets": 200,
@@ -11,7 +11,7 @@
   "symbols.hidesExplorerArrows": false,
   "editor.autoClosingComments": "always",
   "editor.autoClosingBrackets": "always",
-  "terminal.integrated.fontWeight": "normal",
+  "terminal.integrated.fontWeight": "400",
   "editor.fontWeight": "bold",
   "editor.fontSize": 16,
   "editor.fontLigatures": true,
@@ -19,7 +19,7 @@
   "codeium.enableConfig": {
     "*": true
   },
-  "editor.fontFamily": "Monaco,'Courier New',Monospace",
+  "editor.fontFamily": "'Cascadia Code',Consolas, 'Courier New'",
   "explorer.compactFolders": false,
   "explorer.confirmDelete": false
 }
