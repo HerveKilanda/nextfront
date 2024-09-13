@@ -62,7 +62,7 @@ export default function Header() {
       <div
         className={`${
           isOpen ? "block" : "hidden"
-        } sm:block flex-grow sm:flex sm:items-center sm:justify-center`}
+        }  flex-grow sm:flex sm:items-center sm:justify-center`}
       >
         <SearchInput />
       </div>

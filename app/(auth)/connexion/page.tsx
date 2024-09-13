@@ -15,9 +15,6 @@ export default function Connexion() {
   const [alert, setAlert] = useState(false);
   const [isNotified, setIsNotified] = useState(false);
   const [csrfToken, setCsrfToken] = useState("");
-
-  
-
   const {
     register,
     handleSubmit,

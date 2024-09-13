@@ -7,9 +7,11 @@ import MangaCard from "@/components/MangaCard/addMangaCard";
 import { getMe } from "@/utils/get-me";
 import { API_URL } from "@/app/constants/api";
 import { Button } from "@/components/ui/button";
+import { getCsrf } from "@/utils/csrf";
 
 export default function SearchResultsPage({ params }: { params: { title: string } }) {
   const searchParams = useSearchParams();
+  const [csrfToken, setCsrfToken] = useState('');
   const query = searchParams.get('query');
   const results = searchParams.get('results');
   const [mangas, setMangas] = useState([]);
@@ -19,6 +21,15 @@ export default function SearchResultsPage({ params }: { params: { title: string 
       setMangas(JSON.parse(decodeURIComponent(results)));
     }
   }, [params.title, query, results]);
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      const protection = await getCsrf();
+      setCsrfToken(protection);
+    };
+
+    fetchCsrfToken();
+  }, []);
+
 
   const handleBorrowClick = async (mangaId) => {
     const me = await getMe();
@@ -27,7 +38,7 @@ export default function SearchResultsPage({ params }: { params: { title: string 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `token=${me.token}`,
+          'x-csrf-token': csrfToken,
         },
         credentials: "include",
         body: JSON.stringify({ mal_id: mangaId }),
@@ -49,7 +60,7 @@ export default function SearchResultsPage({ params }: { params: { title: string 
       <h1 className="text-3xl font-bold mb-6 text-redivy text-center">
         Résultats de recherche pour "{query}"
       </h1>
-      <div className="flex flex-col items-center">
+      <div className="flex justify-center gap-4 items-center">
         {mangas.length > 0 ? (
           mangas.map((manga) => (
             <div key={manga.mal_id} className="mb-6">
@@ -60,9 +71,7 @@ export default function SearchResultsPage({ params }: { params: { title: string 
                   synopsis: manga.synopsis,
                   type: manga.type,
                   status: manga.status,
-                  genres: Array.isArray(manga.genres)
-                    ? manga.genres.map((genre) => genre.name).join(", ")
-                    : "Aucun genre",
+                  genres: manga.genres,
                 }}
               />
               <Button

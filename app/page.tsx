@@ -23,7 +23,7 @@ export default async function Home() {
       </Head>
       <main>
         <Hero />
-        {/* Ajoutez d'autres sections ici */}
+        
       </main>
     </>
   );

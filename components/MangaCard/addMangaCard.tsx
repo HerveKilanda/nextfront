@@ -8,11 +8,12 @@ type MangaCardProps = {
     synopsis: string;
     type: string;
     status: string;
-    genres: string;
+    genres: { name: string }[];
   };
 };
 
 const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
+  console.log("Manga data in MangaCard:", manga);
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
       {manga.image_url ? (
@@ -33,7 +34,13 @@ const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
         <p className="text-gray-700 text-base">{manga.synopsis}</p>
         <p className="text-gray-700 text-base">Type: {manga.type}</p>
         <p className="text-gray-700 text-base">Status: {manga.status}</p>
-        <p className="text-gray-700 text-base">Genres: {manga.genres}</p>
+        <p className="text-gray-700 text-base">
+  Genres: {
+    Array.isArray(manga.genres) && manga.genres.length > 0
+      ? manga.genres.map(genre => genre.name).join(", ")
+      : "Aucun genre"
+  }
+</p>
       </div>
     </div>
   );
