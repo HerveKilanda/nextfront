@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { getCsrf } from "@/utils/csrf";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { API_URL } from "@/app/constants/api";
 
 export default function Inscription() {
   const [alert, setAlert] = useState(false);
@@ -53,7 +54,7 @@ export default function Inscription() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(`http://localhost:5000/auth/inscription`, {
+      const response = await fetch(`${API_URL}/auth/inscription`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

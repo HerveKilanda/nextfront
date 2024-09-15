@@ -1,10 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
+import { API_URL } from "@/app/constants/api";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+
 
 export default function EmpruntUpdate() {
   const [alert, setAlert] = useState(false);
@@ -42,7 +44,7 @@ export default function EmpruntUpdate() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(`http://localhost:5000/emprunt/delete`, {
+      const response = await fetch(`${API_URL}/emprunt/delete`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

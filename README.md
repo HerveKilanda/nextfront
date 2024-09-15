@@ -29,7 +29,7 @@ Ce projet est le frontend de l'application Otakulinks, construit avec Next.js. I
 3. Configurez les variables d'environnement :
     Créez un fichier `.env.local` à la racine du projet et ajoutez les variables suivantes :
     ```env
-    NEXT_PUBLIC_API_URL=http://localhost:5000
+    
     ```
 
 4. Démarrez le serveur de développement :

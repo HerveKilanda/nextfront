@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { API_URL } from "@/app/constants/api";
 
 export default function EmpruntUpdate() {
   const [alert, setAlert] = useState(false);
@@ -42,7 +43,7 @@ export default function EmpruntUpdate() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(`http://localhost:5000/emprunt/modifier`, {
+      const response = await fetch(`${API_URL}/emprunt/modifier`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
