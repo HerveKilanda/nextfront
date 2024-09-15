@@ -1,12 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
 // components/EmpruntCard.tsx
 import React from "react";
+import Image from "next/image";
+
 
 const EmpruntCard = ({ emprunt }) => {
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white m-2 p-4">
       {emprunt.Manga.image_url ? (
-        <img src={emprunt.Manga.image_url} alt={emprunt.Manga.title} className="w-full h-64 object-cover" />
+        <Image src={emprunt.Manga.image_url} alt={emprunt.Manga.title} className="w-full h-64 object-cover" />
       ) : (
         <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
           <p>Image non disponible</p>
