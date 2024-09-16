@@ -83,6 +83,9 @@ export default function Connexion() {
       }
     } catch (error) {
       console.error("Erreur dans la connexion", error);
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        console.error("Problème de connexion au serveur. Vérifiez l'URL de l'API et la configuration CORS.");
+      }
       setAlert(false);
       setIsNotified(true);
     }
