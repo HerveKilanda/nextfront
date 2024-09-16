@@ -64,7 +64,7 @@ export default function Connexion() {
           "Content-Type": "application/json",
           'x-csrf-token': csrfToken,
         },
-        credentials: "include",
+        credentials: 'include',
         body: JSON.stringify(data),
       });
 
