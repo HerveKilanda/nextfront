@@ -1,16 +1,14 @@
+import React from 'react';
 import Image from "next/image";
-import { ReactNode } from "react";
 import titans from "../../public/titans.jpg";
 
-// Exportez l'interface si vous en avez besoin ailleurs
-export interface LayoutPageProps {
-  children: ReactNode;
-  className?: string;
-}
+type LayoutPageProps = {
+  children: React.ReactNode;
+};
 
-export default function LayoutPage({ children, className = "" }: LayoutPageProps) {
+export default function LayoutPage({ children }: LayoutPageProps): JSX.Element {
   return (
-    <div className={`relative flex flex-col items-center justify-center min-h-screen ${className}`}>
+    <div className="relative flex flex-col items-center justify-center min-h-screen">
       <Image
         src={titans}
         alt="A beautiful blue lock background image"
