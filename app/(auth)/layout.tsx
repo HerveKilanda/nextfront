@@ -9,9 +9,14 @@ import bluelock from "../../public/bluelock.jpg";
  * @param className - Additional classes for custom styling.
  * @returns A styled div containing a background image and the provided children components.
  */
-export default function LayoutPage({ children, className = "" }: { children: ReactNode, className?: string }) {
+
+type LayoutPageProps = {
+  children: React.ReactNode;
+};
+
+export default function LayoutPage({ children}: LayoutPageProps): JSX.Element {
   return (
-    <div className={`relative flex flex-col items-center justify-center min-h-screen ${className}`}>
+    <div className="relative flex flex-col items-center justify-center min-h-screen">
       <Image
         src={bluelock}
         alt="A beautiful blue lock background image"
