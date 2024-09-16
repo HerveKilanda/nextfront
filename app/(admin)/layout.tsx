@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ReactNode } from "react";
-import titans from "public/titans.jpg";
+import titans from "../../public/titans.jpg";
 
 /**
  * React component that wraps its children with a styled div including a background image.
@@ -9,7 +9,7 @@ import titans from "public/titans.jpg";
  * @param className - Additional classes for custom styling.
  * @returns A styled div containing a background image and the provided children components.
  */
-export default function Layout({ children, className = "" }: { children: ReactNode, className?: string }) {
+export default function LayoutPage({ children, className = "" }: { children: ReactNode, className?: string }) {
   return (
     <div className={`relative flex flex-col items-center justify-center min-h-screen ${className}`}>
       <Image
