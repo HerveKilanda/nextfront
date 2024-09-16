@@ -2,6 +2,11 @@ import Image from "next/image";
 import { ReactNode } from "react";
 import titans from "../../public/titans.jpg";
 
+interface LayoutPageProps {
+  children: ReactNode;
+  className?: string;
+}
+
 /**
  * React component that wraps its children with a styled div including a background image.
  * Uses Next.js's Image component for optimized image rendering.
@@ -9,7 +14,7 @@ import titans from "../../public/titans.jpg";
  * @param className - Additional classes for custom styling.
  * @returns A styled div containing a background image and the provided children components.
  */
-export default function LayoutPage({ children, className = "" }: { children: ReactNode, className?: string }) {
+export default function LayoutPage({ children, className = "" }: LayoutPageProps) {
   return (
     <div className={`relative flex flex-col items-center justify-center min-h-screen ${className}`}>
       <Image
@@ -19,7 +24,7 @@ export default function LayoutPage({ children, className = "" }: { children: Rea
         priority
         fill
       />
-      <div className=" bg-opacity-90 p-8 rounded-lg shadow-lg z-10">
+      <div className="bg-opacity-90 p-8 rounded-lg shadow-lg z-10">
         {children}
       </div>
     </div>
