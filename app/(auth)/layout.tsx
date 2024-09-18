@@ -20,9 +20,12 @@ export default function LayoutPage({ children}: LayoutPageProps): JSX.Element {
       <Image
         src={bluelock}
         alt="A beautiful blue lock background image"
-        className="absolute inset-0 w-full h-full object-cover -z-10 brightness-50"
+        className="absolute inset-0  object-cover -z-10 brightness-50"
         priority
         fill
+        sizes="(100vw)"
+        
+        
       />
       <div className=" bg-opacity-90 p-8 rounded-lg shadow-lg z-10">
         {children}
