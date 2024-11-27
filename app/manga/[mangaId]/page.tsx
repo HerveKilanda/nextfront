@@ -6,11 +6,13 @@ import MangaCard from "@/components/MangaCard/addMangaCard";
 import { getMe } from "@/utils/get-me";
 import { Button } from "@/components/ui/button";
 import { API_URL } from "../../constants/api";
+import { getCsrf } from "@/utils/csrf";
 
 export default function MangaDetails({ params }) {
   const [manga, setManga] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [csrfToken, setCsrfToken] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -42,6 +44,14 @@ export default function MangaDetails({ params }) {
     fetchMangaDetails();
   }, [params.mangaId]);
 
+    useEffect(() => {
+      const fetchCsrfToken = async () => {
+        const token = await getCsrf(); // Assurez-vous de définir la méthode pour obtenir le CSRF token
+        setCsrfToken(token);
+      };
+      fetchCsrfToken();
+    }, []);
+
   const handleBorrowClick = async () => {
     const me = await getMe();
     try {
@@ -50,7 +60,7 @@ export default function MangaDetails({ params }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `token=${me.token}`,
+          "x-csrf-token": csrfToken,
         },
         credentials: "include",
         body: JSON.stringify({ mal_id: mangaId }),

@@ -1,5 +1,5 @@
 {
-  "workbench.colorTheme": "Ayu Tokyo Night",
+  "workbench.colorTheme": "AMOLED Github Theme",
   "files.autoSave": "afterDelay",
   "codium.codeCompletion.enable": true,
   "codium.rag.maxLocalSnippets": 200,
@@ -19,7 +19,10 @@
   "codeium.enableConfig": {
     "*": true
   },
-  "editor.fontFamily": "'Cascadia Code',Consolas, 'Courier New'",
+  "editor.fontFamily": "Jetbrains Mono,Consolas, 'Courier New'",
   "explorer.compactFolders": false,
-  "explorer.confirmDelete": false
+  "explorer.confirmDelete": false,
+  "editor.tabSize": 2,
+  "editor.formatOnPaste": true,
+  "prettier.configPath": ".prettierrc.json"
 }

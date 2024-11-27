@@ -1,5 +1,8 @@
 import { API_URL } from "../app/constants/api";
 import { getCsrf } from "./csrf";
+import { useEffect, useState } from "react";
+
+
 export const searchManga = async (title: string) => {
   try {
     const csrfToken = await getCsrf();
@@ -14,9 +17,8 @@ export const searchManga = async (title: string) => {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch manga");
+      throw new Error("Erreur dans la recherche du manga");
     }
-
     const data = await response.json();
     return data;
   } catch (error) {

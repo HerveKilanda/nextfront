@@ -22,6 +22,10 @@ export default function Header() {
         setUser(user);
       } catch (error) {
         console.error("Error fetching user:", error);
+        console.error(
+          "Erreur lors de la récupération de l'utilisateur :",
+          error
+        );
       }
     };
     fetchUser();
@@ -72,8 +76,17 @@ export default function Header() {
         } flex sm:flex-grow sm:flex sm:items-center sm:space-x-4 sm:justify-end text-xl gap-4 mt-4 sm:mt-0`}
       >
         <NavLink href="/" text="Home" />
-        <NavLink href="/inscription" text="Inscription" />
-        <NavLink href="/connexion" text="Connexion" />
+        {user === null &&  (
+          <>
+            <NavLink href="/inscription" text="Inscription" />
+            <NavLink href="/connexion" text="Connexion" />
+          </>
+        )}
+        {user && (
+          <div className="text-lg">
+            <span>Bienvenue, {user.username}</span>{" "}
+          </div>
+        )}
         {user && <UserMenu user={user} />}
       </div>
     </nav>
@@ -86,12 +99,16 @@ export default function Header() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           type="search"
-          className="w-96 sm:w-96 h-12 px-4 rounded-full text-black border-2 border-gray-300 focus:border-blue-500 focus:outline-none"
+          className="w-96 sm:w-96  px-4 rounded-full text-black border-2 border-gray-300 focus:border-blue-500 focus:outline-none"
           placeholder="Rechercher un manga"
           autoFocus
         />
-         <button onClick={handleSearchSubmit} type="submit" className="ml-2 p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white">
-          <FaSearch  />
+        <button
+          onClick={handleSearchSubmit}
+          type="submit"
+          className="ml-2 p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          <FaSearch />
         </button>
       </div>
     );

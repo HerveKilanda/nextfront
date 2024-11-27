@@ -61,7 +61,6 @@ const UserMenu = ({ user }) => {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Mon Profil</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <Link href="/update">Modification de Profil</Link>

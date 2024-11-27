@@ -7,6 +7,14 @@ import { getCsrf } from "@/utils/csrf";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { API_URL } from "@/app/constants/api";
+import DOMPurify from "dompurify";
+
+const sqlXssRegex = /(<|>|'|\"|\*|;|--|\/|\\)/gi;
+const usernameRegex = /^[a-zA-Z0-9_-]+$/; // Valide le nom d'utilisateur
+const passwordRegex = /^[a-zA-Z0-9!@#$%^&*]+$/; // Valide le mot de passe
+const sqlInjectionRegex =
+  /(\b(SELECT|INSERT|DELETE|UPDATE|DROP|EXEC|UNION|ALTER|SCRIPT|ONERROR|ONCLICK|ONLOAD|<|>|\*|;|--|\(\)|\{\})\b)/gi;
+
 
 export default function Inscription() {
   const [alert, setAlert] = useState(false);
@@ -43,6 +51,7 @@ export default function Inscription() {
       </div>
     );
   }
+
   useEffect(() => {
     const fetchCsrfToken = async () => {
       const protection = await getCsrf();
@@ -54,6 +63,12 @@ export default function Inscription() {
 
   const onSubmit = async (data) => {
     try {
+      const sanitizedData = {
+        ...data,
+        email: DOMPurify.sanitize(data.email),
+        username: DOMPurify.sanitize(data.username),
+        password: DOMPurify.sanitize(data.password),
+      };
       const response = await fetch(`${API_URL}/auth/inscription`, {
         method: "POST",
         headers: {
@@ -61,11 +76,11 @@ export default function Inscription() {
           "x-csrf-token": csrfToken,
         },
         credentials: "include",
-        body: JSON.stringify(data),
+        body: JSON.stringify(sanitizedData),
       });
 
       if (response.ok) {
-        console.log("Inscription reussie avec success !");
+        console.log("Inscription réussie avec succès !");
         setAlert(true);
         setIsNotified(true);
         reset();
@@ -81,7 +96,6 @@ export default function Inscription() {
     }
   };
 
-  
   return (
     <div>
       {isNotified && <Notification />}
@@ -95,8 +109,8 @@ export default function Inscription() {
         <div className="space-y-5 mt-5 p-6">
           <Input
             type="text"
-            placeholder="email"
-            className="text-xl bg-[#333] placeholder:text-gray-50 w-full inline-block"
+            className="bg-white text-black"
+            placeholder="Email"
             {...register("email", {
               required: "L'email est requis",
               pattern: {
@@ -105,41 +119,48 @@ export default function Inscription() {
               },
             })}
           />
-          {errors.email && (
-            <p role="alert" className="text-red-500">
-              {errors.email.message}
-            </p>
-          )}
+          {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+
           <Input
             type="text"
-            placeholder="username"
-            className="text-xl bg-[#333] placeholder:text-gray-50 w-full inline-block"
+            placeholder="Username"
+            className="bg-white text-black"
             {...register("username", {
               required: "Le nom d'utilisateur est requis",
+              pattern: {
+                value: usernameRegex,
+                message:
+                  "Le nom d'utilisateur contient des caractères interdits",
+              },
+              validate: (value) =>
+                !sqlInjectionRegex.test(value) ||
+                "Caractères ou mots interdits dans le nom d'utilisateur",
             })}
           />
           {errors.username && (
-            <p role="alert" className="text-red-500">
-              {errors.username.message}
-            </p>
+            <p className="text-red-500">{errors.username.message}</p>
           )}
+
           <Input
             type="password"
-            placeholder="password"
-            className="text-xl bg-[#333] placeholder:text-gray-50 w-full inline-block"
+            placeholder="Mot de passe"
+            className="bg-white text-black"
             {...register("password", {
               required: "Le mot de passe est requis",
               minLength: {
                 value: 12,
                 message: "Le mot de passe doit contenir au moins 12 caractères",
               },
+              pattern: {
+                value: passwordRegex,
+                message: "Le mot de passe contient des caractères interdits",
+              },
+              validate: (value) =>
+                !sqlInjectionRegex.test(value) ||
+                "Caractères ou mots interdits dans le mot de passe",
             })}
           />
-          {errors.password && (
-            <p role="alert" className="text-red-500">
-              {errors.password.message}
-            </p>
-          )}
+          {errors.password && <p>{errors.password.message}</p>}
           <Button type="submit" className="w-full" disabled={!isValid}>
             Valider
           </Button>

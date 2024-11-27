@@ -6,6 +6,13 @@ import { getCsrf } from "@/utils/csrf";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { API_URL } from "@/app/constants/api";
+
+const sqlXssRegex = /(<|>|'|\"|\*|;|--|\/|\\)/gi;
+const usernameRegex = /^[a-zA-Z0-9_-]+$/; // Valide le nom d'utilisateur
+const passwordRegex = /^[a-zA-Z0-9!@#$%^&*]+$/; // Valide le mot de passe
+const sqlInjectionRegex =
+  /(\b(SELECT|INSERT|DELETE|UPDATE|DROP|EXEC|UNION|ALTER|SCRIPT|ONERROR|ONCLICK|ONLOAD|<|>|\*|;|--|\(\)|\{\})\b)/gi;
+
 export default function UpdateProfile() {
   const [alert, setAlert] = useState(false);
   const [csrfToken, setCsrfToken] = useState("");
@@ -114,6 +121,14 @@ export default function UpdateProfile() {
             className="text-xl bg-[#333] placeholder:text-gray-50 w-full inline-block"
             {...register("username", {
               required: "Le nom d'utilisateur est requis",
+              pattern: {
+                value: usernameRegex,
+                message:
+                  "Le nom d'utilisateur contient des caractères interdits",
+              },
+              validate: (value) =>
+                !sqlInjectionRegex.test(value) ||
+                "Caractères ou mots interdits dans le nom d'utilisateur",
             })}
           />
           {errors.username && (
@@ -128,9 +143,16 @@ export default function UpdateProfile() {
             {...register("password", {
               required: "Le mot de passe est requis",
               minLength: {
-                value: 6,
-                message: "Le mot de passe doit contenir au moins 6 caractères",
+                value: 12,
+                message: "Le mot de passe doit contenir au moins 12 caractères",
               },
+              pattern: {
+                value: passwordRegex,
+                message: "Le mot de passe contient des caractères interdits",
+              },
+              validate: (value) =>
+                !sqlInjectionRegex.test(value) ||
+                "Caractères ou mots interdits dans le mot de passe",
             })}
           />
           {errors.password && (

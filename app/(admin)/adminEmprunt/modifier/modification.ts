@@ -9,7 +9,7 @@ export async function modifEmprunt(mal_id: string) {
     console.log("no token");
     return null;
   } else {
-    console.log("token", token);
+    // console.log("token", token);
   }
 
   try {

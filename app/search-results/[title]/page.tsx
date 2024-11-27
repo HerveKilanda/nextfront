@@ -15,6 +15,7 @@ export default function SearchResultsPage({ params }: { params: { title: string 
   const query = searchParams.get('query');
   const results = searchParams.get('results');
   const [mangas, setMangas] = useState([]);
+  const [me, setMe] = useState()
 
   useEffect(() => {
     if (query && results) {
@@ -33,6 +34,7 @@ export default function SearchResultsPage({ params }: { params: { title: string 
 
   const handleBorrowClick = async (mangaId) => {
     const me = await getMe();
+    setMe(me)
     try {
       const response = await fetch(`${API_URL}/emprunt/create`, {
         method: "POST",
